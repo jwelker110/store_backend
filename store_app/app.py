@@ -6,12 +6,15 @@ from database import User, Category, Item
 DEFAULT_BLUEPRINTS = ()
 
 
-def create_app(app_name=__name__, blueprints=DEFAULT_BLUEPRINTS, config=DevelopmentConfig):
+def create_app(app_name='Store App', blueprints=DEFAULT_BLUEPRINTS, config=DevelopmentConfig):
     # create and set up the application
     app = Flask(app_name)
+
     app.config.from_object(DevelopmentConfig)
-    app.config.from_pyfile('config_secret.py')
+    app.config.from_pyfile(app.config['CONFIG_PATH'])
     configure_extensions(app)
+    configure_processors(app)
+    configure_blueprints(app, blueprints)
 
     return app
 
@@ -25,9 +28,13 @@ def configure_processors(app):
         response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE')
         return response
 
-    @app.error_handler(404)
+    @app.errorhandler(404)
     def error_handler(error):
-        pass
+        return 'Error'
+
+    @app.route('/')
+    def index():
+        return 'Hello World!'
 
 
 def configure_extensions(app):
