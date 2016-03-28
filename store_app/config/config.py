@@ -18,14 +18,17 @@ class BaseConfig(object):
 
 
 class DevelopmentConfig(BaseConfig):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
     DEBUG = True
 
 
 class ProductionConfig(BaseConfig):
+    SQLALCHEMY_DATABASE_URI = 'mysql://username:password@server/db'
     DEBUG = False
     TESTING = False
 
 
 class TestingConfig(BaseConfig):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
     DEBUG = True
     TESTING = True
