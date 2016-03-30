@@ -24,13 +24,26 @@ class StoreAppTestCase(unittest.TestCase):
     def init_data(self):
         for i in range(10):
             newUser = User(
-                    username='Tester%s' % str(i),
-                    email='Tester%s@email.com' % str(i),
-                    password='lol123'
+                username='Tester%s' % str(i),
+                email='Tester%s@email.com' % str(i),
+                password='lol123'
             )
             db.session.add(newUser)
         db.session.commit()
-        items = []
+        for i in range(10):
+            newItem = Item(
+                name='TestItem%s' % str(i),
+                description='This is TestItem%s' % str(i),
+                price=10.50,
+                sale_price=10.50,
+                stock=10
+            )
+            db.session.add(newItem)
+        db.session.commit()
+        for i in range(5):
+            newCat = Category(
+                name='TestCategory%s' % str(i)
+            )
 
     def assert_status(self, status, response, msg):
         message = msg or 'Expected status %s but received status %s.' % (status, response.status)
@@ -38,4 +51,4 @@ class StoreAppTestCase(unittest.TestCase):
 
     def endpointExists(self, ep):
         req = self.client.get(ep)
-        self.assert_status(200, req, 'Endpoint \'%s\' does not exist.' % ep)
+        self.assert_status('200 OK', req, 'Endpoint \'%s\' does not exist.' % ep)
