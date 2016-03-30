@@ -9,7 +9,6 @@ class Item(db.Model):
     name = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(500))
     price = db.Column(db.Numeric, nullable=False)
-    discount = db.Column(db.Integer, nullable=False, default=0)
     sale_price = db.Column(db.Numeric, nullable=True)
     stock = db.Column(db.Integer, nullable=False, default=0)
     created_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
