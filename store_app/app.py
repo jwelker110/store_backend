@@ -1,8 +1,9 @@
 from flask import Flask
 from extensions import db, mail, bcrypt
 from config import DevelopmentConfig
+from blueprints import user_bp, item_bp, category_bp
 
-DEFAULT_BLUEPRINTS = ()
+DEFAULT_BLUEPRINTS = (user_bp,)
 
 
 def create_app(app_name='Store App', blueprints=DEFAULT_BLUEPRINTS, config=DevelopmentConfig):
