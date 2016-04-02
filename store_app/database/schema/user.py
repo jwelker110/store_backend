@@ -38,8 +38,13 @@ class User(db.Model):
         return "<User(%s)>" % self.username
 
     def generate_password_hash(self, password):
-        # todo confirm rounds are being used to generate
         self.password_hash = bcrypt.generate_password_hash(password)
 
     def check_password_hash(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    def dict(self):
+        return {
+            "username": self.username,
+            "registered_on": self.registered_on.isoformat()
+        }

@@ -9,3 +9,9 @@ class Category(db.Model):
 
     def __repr__(self):
         return "<Category(%s)>" % self.name
+
+    def dict(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }

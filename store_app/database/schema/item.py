@@ -8,20 +8,40 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(500))
+    owner_name = db.Column(db.String(20), db.ForeignKey("User.username_lower"), nullable=False)
+
+    def __repr__(self):
+        return "<Item(%s)>" % self.name
+
+    def dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "owner_name": self.owner_name
+        }
+
+
+class ItemMeta(db.Model):
+    __tablename__ = "Item_Meta"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    item_id = db.Column(db.Integer, db.ForeignKey("Item.id"), nullable=False)
     price = db.Column(db.Numeric, nullable=False)
     sale_price = db.Column(db.Numeric, nullable=True)
     stock = db.Column(db.Integer, nullable=False, default=0)
     created_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    description = db.Column(db.String(120))
+    meta_key = db.Column(db.String(20))
+    meta_value = db.Column(db.String(20))
 
-    creator_id = db.Column(db.Integer, db.ForeignKey("User.id"))
-    category_id = db.Column(db.Integer, db.ForeignKey("Category.id"))
-
-    # create the Item.creator relationship, which also creates the User.items
-    # relationship which holds a collection of items for each user
-    creator = db.relationship("User", backref="items")
-    # create the Item.category relationship, which also creates the Category.items
-    # relationship which holds a collection of items for each user
-    category = db.relationship("Category", backref="items")
-
-    def __repr__(self):
-        return "<Item(%s)>" % self.name
+    def dict(self):
+        return {
+            "price": self.price,
+            "sale_price": self.sale_price,
+            "stock": self.stock,
+            "created_on": self.created_on,
+            "description": self.description,
+            "meta_key": self.meta_key,
+            "meta_value": self.meta_value
+        }
