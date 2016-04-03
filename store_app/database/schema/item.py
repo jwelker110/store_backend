@@ -1,5 +1,6 @@
 from datetime import datetime
 from store_app.extensions import db
+from string import lower
 
 
 class Item(db.Model):
@@ -10,8 +11,13 @@ class Item(db.Model):
     description = db.Column(db.String(500))
     owner_name = db.Column(db.String(20), db.ForeignKey("User.username_lower"), nullable=False)
 
-    def __repr__(self):
-        return "<Item(%s)>" % self.name
+    def __init__(self, owner_name, name=None, description=None):
+        self.name = name
+        self.description = description
+        self.owner_name = lower(owner_name)
+
+    # def __repr__(self):
+    #     return "<Item(%s)>" % self.name
 
     def dict(self):
         return {
@@ -34,6 +40,15 @@ class ItemMeta(db.Model):
     description = db.Column(db.String(120))
     meta_key = db.Column(db.String(20))
     meta_value = db.Column(db.String(20))
+
+    def __init__(self, item_id, price, sale_price=None, stock=0, description=None, meta_key=None, meta_value=None):
+        self.item_id = item_id
+        self.price = price
+        self.sale_price = sale_price
+        self.stock = stock
+        self.description = description
+        self.meta_key = meta_key
+        self.meta_value = meta_value
 
     def dict(self):
         return {
