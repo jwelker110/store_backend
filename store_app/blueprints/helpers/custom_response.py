@@ -1,4 +1,5 @@
 from flask import Response
+from custom_encoder import multi_enc
 
 
 class Resp(Response):
@@ -10,3 +11,11 @@ class Resp(Response):
                                        headers=headers,
                                        mimetype=mimetype,
                                        content_type=content_type)
+
+
+def create_response(data, **kwargs):
+    if isinstance(data, dict):
+        r = multi_enc(data)
+        return Resp(response=r, **kwargs)
+    else:
+        raise TypeError("First argument must be a dictionary containing key-value pairs to encode")
