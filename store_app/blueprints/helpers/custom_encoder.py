@@ -1,7 +1,9 @@
-import decimal, datetime
+import decimal
+import datetime
+from json import dumps
 
 
-def sqlencoder(obj):
+def sqlalchemy_enc(obj):
     """
     Custom encoder for encoding decimal and datetime objects to JSON per answer found
     at http://codeandlife.com/2014/12/07/sqlalchemy-results-to-json-the-easy-way/
@@ -12,3 +14,36 @@ def sqlencoder(obj):
         return float(obj)
     elif isinstance(obj, datetime.date):
         return obj.isoformat()
+
+
+def simple_enc(key, values):
+    """
+    Pairs the given array of values with
+    :param key: The key to associate the values with
+    :param values: The values to put in a JSON array
+    :return: the JSON key-value pair as a JSON string
+    """
+    try:
+        return dumps({key: [v.dict() for v in values]}, default=sqlalchemy_enc)
+    except:
+        raise TypeError("Items must be dictionaries before encoding using this method")
+
+
+def multi_enc(dictionary):
+    """
+    JSON encodes the given dictionary of key-value pairs
+    :param dictionary: key-value pairs representing the data wishing to be JSON encoded
+    :return: JSON string
+    """
+    keys = dictionary.keys()
+    newDict = {}
+    try:
+        for k in keys:
+            values = []
+            for v in dictionary[k]:
+                values.append(v.dict())
+            newDict.setdefault(k, values)
+        return dumps(newDict, default=sqlalchemy_enc)
+    except Exception as e:
+        print e
+        raise TypeError("Items must be dictionaries before encoding using this method")
