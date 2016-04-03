@@ -52,6 +52,7 @@ class ItemMeta(db.Model):
 
     def dict(self):
         return {
+            "item_id": self.item_id,
             "price": self.price,
             "sale_price": self.sale_price,
             "stock": self.stock,
