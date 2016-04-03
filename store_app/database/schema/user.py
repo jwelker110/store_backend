@@ -46,5 +46,5 @@ class User(db.Model):
     def dict(self):
         return {
             "username": self.username,
-            "registered_on": self.registered_on.isoformat()
+            "registered_on": self.registered_on
         }
