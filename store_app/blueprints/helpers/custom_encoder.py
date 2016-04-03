@@ -35,14 +35,16 @@ def multi_enc(dictionary):
     :param dictionary: key-value pairs representing the data wishing to be JSON encoded
     :return: JSON string
     """
-    keys = dictionary.keys()
     newDict = {}
     try:
-        for k in keys:
-            values = []
-            for v in dictionary[k]:
-                values.append(v.dict())
-            newDict.setdefault(k, values)
+        for key, value in dictionary.iteritems():
+            if isinstance(value, list):
+                values = []
+                for v in value:
+                    values.append(v.dict())
+                newDict.setdefault(key, values)
+            else:
+                newDict.setdefault(key, value.dict())
         return dumps(newDict, default=sqlalchemy_enc)
     except Exception as e:
         print e
