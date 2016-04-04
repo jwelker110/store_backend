@@ -15,7 +15,7 @@ def getCategories():
 
 @category_bp.route('/category/<string:category>/items')
 def getItemsByCategory(category):
-    items = db.session.query(Item).outerjoin(CategoryItems).outerjoin(Category).filter_by(name=category).limit(10)
+    items = db.session.query(Item).outerjoin(CategoryItems).outerjoin(Category).filter_by(name=category).limit(10).all()
     return create_response({"items": items})
 
 
@@ -24,5 +24,5 @@ def getItemsByCategoryOffset(category, offset):
     items = db.session.query(Item)\
         .outerjoin(CategoryItems)\
         .outerjoin(Category)\
-        .filter_by(name=category).offset(offset).limit(10)
+        .filter_by(name=category).offset(offset).limit(10).all()
     return create_response({"items": items})
