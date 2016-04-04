@@ -39,10 +39,9 @@ def multi_enc(dictionary):
     try:
         for key, value in dictionary.iteritems():
             if isinstance(value, list):
-                values = []
-                for v in value:
-                    values.append(v.dict())
-                newDict.setdefault(key, values)
+                newDict.setdefault(key, [v.dict() for v in value if v is not None])
+            elif value is None:
+                newDict.setdefault(key)
             else:
                 newDict.setdefault(key, value.dict())
         return dumps(newDict, default=sqlalchemy_enc)
