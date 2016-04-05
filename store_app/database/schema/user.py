@@ -15,6 +15,7 @@ class User(db.Model):
     confirmed_on = db.Column(db.DateTime)
 
     email = db.Column(db.String(250), nullable=False, unique=True)
+    email_lower = db.Column(db.String(250), nullable=False, unique=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     username_lower = db.Column(db.String(20), nullable=False, unique=True)
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
@@ -28,6 +29,7 @@ class User(db.Model):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
+        self.email_lower = lower(email)
         self.username = username
         self.username_lower = lower(username)
         self.admin = admin
