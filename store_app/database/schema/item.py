@@ -33,7 +33,7 @@ class ItemMeta(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     item_id = db.Column(db.Integer, db.ForeignKey("Item.id"), nullable=False)
-    avatar_url = db.Column(db.String(100))
+    image_url = db.Column(db.String(100))
     price = db.Column(db.Numeric, nullable=False)
     sale_price = db.Column(db.Numeric, nullable=True)
     stock = db.Column(db.Integer, nullable=False, default=0)
@@ -42,9 +42,9 @@ class ItemMeta(db.Model):
     meta_key = db.Column(db.String(20))
     meta_value = db.Column(db.String(20))
 
-    def __init__(self, item_id, price, avatar_url=None, sale_price=None, stock=0, description=None, meta_key=None, meta_value=None):
+    def __init__(self, item_id, price, image_url=None, sale_price=None, stock=0, description=None, meta_key=None, meta_value=None):
         self.item_id = item_id
-        self.avatar_url = avatar_url
+        self.image_url = image_url
         self.price = price
         self.sale_price = sale_price
         self.stock = stock
@@ -55,7 +55,7 @@ class ItemMeta(db.Model):
     def dict(self):
         return {
             "item_id": self.item_id,
-            "avatar_url": self.avatar_url,
+            "image_url": self.image_url,
             "price": self.price,
             "sale_price": self.sale_price,
             "stock": self.stock,
