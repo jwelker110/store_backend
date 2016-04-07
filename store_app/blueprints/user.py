@@ -1,42 +1,38 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from string import lower
+from jwt import encode, decode
 
 from store_app.database import User, Item, Category
-from helpers import create_response
+from helpers import create_response, convertToInt
 
 user_bp = Blueprint("user_bp", __name__)
 
 
-@user_bp.route('/users', methods=['GET'])
-def getUsers():
-    users = User.query.limit(10).all()
-    return create_response({"users": users})
+@user_bp.route('/api/v1/users.json', methods=['GET', 'POST'])
+def users_ep():
+    if request.method == 'GET':
+        offset = convertToInt(request.args.get('offset'))
+        users = User.query.offset(offset).limit(25).all()
+
+        return create_response({"users": users})
+
+    elif request.method == 'POST':
+        # create a new user
+        return "POSTED"
 
 
-@user_bp.route('/users/<int:offset>', methods=['GET'])
-def getUsersByOffset(offset):
-    users = User.query.offset(offset).limit(10).all()
-    return create_response({"users": users})
+@user_bp.route('/api/v1/users/items.json', methods=['GET', 'POST'])
+def usersItems_ep():
+    if request.method == 'GET':
+        offset = convertToInt(request.args.get('offset'))
+        username = request.args.get('username')
 
+        if username is None:
+            items = []
+        else:
+            items = Item.query.filter_by(owner_name=lower(username)).offset(offset).limit(25).all()
 
-@user_bp.route('/user/<string:username>', methods=['GET'])
-def getUserByUsername(username):
-    user = User.query.filter_by(username_lower=lower(username)).limit(10).all()
-    return create_response({"users": user})
-
-
-@user_bp.route('/user/<string:username>/items', methods=['GET'])
-def getItemsByUsername(username):
-    items = Item.query.filter_by(owner_name=lower(username)).limit(10).all()
-    return create_response({"items": items})
-
-
-@user_bp.route('/user/<string:username>/items/<int:offset>', methods=['GET'])
-def getItemsByUsernameOffset(username, offset):
-    items = Item.query.filter_by(owner_name=lower(username)).offset(offset).limit(10).all()
-    return create_response({"items": items})
-
-
-@user_bp.route('/user', methods=['POST'])
-def postUser():
-    pass
+        return create_response({"items": items})
+    elif request.method == 'POST':
+        # create an item associated with the logged in user
+        return 'POSTED'
