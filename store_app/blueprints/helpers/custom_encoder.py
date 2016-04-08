@@ -42,8 +42,10 @@ def multi_enc(dictionary):
                 newDict.setdefault(key, [v.dict() for v in value if v is not None])
             elif value is None:
                 newDict.setdefault(key)
-            else:
+            elif hasattr(value, 'dict'):
                 newDict.setdefault(key, value.dict())
+            else:
+                newDict.setdefault(key, value)
         return dumps(newDict, default=sqlalchemy_enc)
     except Exception as e:
         print e
