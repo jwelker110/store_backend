@@ -24,7 +24,7 @@ def items_ep():
         return create_response({"items": items})
 
     elif request.method == 'POST':
-        # create item here or in the users blueprint?
+        # create item here
         return "POSTED"
 
 
