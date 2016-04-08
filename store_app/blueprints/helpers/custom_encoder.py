@@ -49,4 +49,4 @@ def multi_enc(dictionary):
         return dumps(newDict, default=sqlalchemy_enc)
     except Exception as e:
         print e
-        raise TypeError("Items must be dictionaries before encoding using this method")
+        raise e
