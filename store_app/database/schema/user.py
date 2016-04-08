@@ -21,10 +21,13 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
     admin = db.Column(db.Boolean, nullable=False, default=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirm_token = db.Column(db.String(15))
+    confirm_token_created_on = db.Column(db.DateTime)
 
     def __init__(self, oa_id=None, first_name=None,
                  last_name=None, email=None, username=None,
-                 password=None, admin=False, confirmed=False):
+                 password=None, admin=False, confirmed=False,
+                 confirm_token=None, confirm_token_created_on=None):
         self.oa_id = oa_id
         self.first_name = first_name
         self.last_name = last_name
@@ -34,6 +37,8 @@ class User(db.Model):
         self.username_lower = lower(username)
         self.admin = admin
         self.confirmed = confirmed
+        self.confirm_token = confirm_token
+        self.confirm_token_created_on = confirm_token_created_on
         self.generate_password_hash(password)
 
     def __repr__(self):
