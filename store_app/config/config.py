@@ -20,6 +20,7 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/dev.db'
     DEBUG = True
+    TESTING = True
 
 
 class ProductionConfig(BaseConfig):
