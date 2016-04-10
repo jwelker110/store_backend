@@ -1,6 +1,8 @@
-from store_app.extensions import db, bcrypt
 from datetime import datetime
 from string import lower
+
+from store_app.extensions import db, bcrypt
+from store_app.blueprints.helpers import generate_secret_key, confirm_token
 
 
 class User(db.Model):
@@ -21,13 +23,12 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
     admin = db.Column(db.Boolean, nullable=False, default=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    confirm_token = db.Column(db.String(15))
-    confirm_token_created_on = db.Column(db.DateTime)
+    confirm_secret = db.Column(db.String(15))
+    confirm_secret_created_on = db.Column(db.DateTime)
 
     def __init__(self, oa_id=None, first_name=None,
                  last_name=None, email=None, username=None,
-                 password=None, admin=False, confirmed=False,
-                 confirm_token=None, confirm_token_created_on=None):
+                 password=None, admin=False, confirmed=False):
         self.oa_id = oa_id
         self.first_name = first_name
         self.last_name = last_name
@@ -37,9 +38,8 @@ class User(db.Model):
         self.username_lower = lower(username)
         self.admin = admin
         self.confirmed = confirmed
-        self.confirm_token = confirm_token
-        self.confirm_token_created_on = confirm_token_created_on
         self.generate_password_hash(password)
+        self.generate_secret()
 
     def __repr__(self):
         return "<User(%s)>" % self.username
@@ -49,6 +49,14 @@ class User(db.Model):
 
     def check_password_hash(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
+
+    def generate_secret(self):
+        self.confirm_secret = generate_secret_key()
+        self.confirm_secret_created_on = datetime.now()
+
+    def confirm_email(self, token):
+        email = confirm_token(token=token, secretKey=self.confirm_secret)
+        return email == self.email
 
     def dict(self):
         return {
