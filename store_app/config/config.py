@@ -2,6 +2,7 @@ import os
 
 _absolute_path = os.path.dirname(os.path.abspath(__file__))
 _config_path = os.path.join(_absolute_path, 'config_secret.py')
+_secret_key_path = os.path.join(_absolute_path, 'secret_keys.json')
 
 
 class BaseConfig(object):
@@ -11,6 +12,7 @@ class BaseConfig(object):
     TEMPLATE_PATH = os.path.join(PROJECT_ROOT, 'templates')
     UPLOAD_PATH = os.path.join(PROJECT_ROOT, 'uploads')
     CONFIG_PATH = _config_path
+    SECRET_KEY_PATH = _secret_key_path
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
