@@ -3,6 +3,7 @@ import random
 import string
 import os
 import jwt
+from datetime import datetime, timedelta
 
 
 def generate_secret_key():
@@ -31,6 +32,8 @@ def confirm_token(token, secretKey):
 def create_jwt(payload):
     key = os.environ.get('JWT_CIPHER')
     try:
+        payload['iat'] = datetime.utcnow()
+        payload['exp'] = datetime.utcnow() + timedelta(days=3)
         return jwt.encode(payload, key, algorithm='HS256')
     except:
         return None
