@@ -38,6 +38,8 @@ class User(db.Model):
         self.username_lower = lower(username)
         self.admin = admin
         self.confirmed = confirmed
+        if self.confirmed:
+            self.confirmed_on = datetime.now()
         self.generate_password_hash(password)
         self.generate_secret()
 
