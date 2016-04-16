@@ -151,7 +151,7 @@ def google_oauth():
     :return: JWT with the claims for the user to be sent on future requests
     """
     flow = client.flow_from_clientsecrets(
-        filename='store_app/blueprints/helpers/client_secrets.json',
+        filename='store_app/blueprints/helpers/client_secrets.json',  # todo add these to environ var?
         scope='profile email',
         redirect_uri=url_for('auth_bp.google_oauth', _external=True)
     )
