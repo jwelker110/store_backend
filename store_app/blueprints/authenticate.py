@@ -61,7 +61,7 @@ def register():
         db.session.commit()
 
         payload = {
-            "username": user.username,
+            "iss": user.username,
             "confirmed": user.confirmed
         }
         jwt_token = create_jwt(payload)
@@ -102,7 +102,7 @@ def login():
 
     if user.check_password_hash(password):
         payload = {
-            "username": user.username,
+            "iss": user.username,
             "confirmed": user.confirmed
         }
         return create_response({
@@ -124,7 +124,7 @@ def confirm():
     # grab the JWT payload
     payload = decode_jwt(jwt_token)
     # grab the JWT payload contents
-    username = payload.get('username')
+    username = payload.get('iss')
     confirmed = payload.get('confirmed')
 
     user = User.query.filter(username_lower=lower(username)).first()
@@ -187,7 +187,7 @@ def google_oauth():
             return create_response({}, status=500)
 
     payload = {
-        "username": user.username,
+        "iss": user.username,
         "confirmed": user.confirmed
     }
     return create_response({
@@ -195,12 +195,8 @@ def google_oauth():
     })
 
 
-
-@auth_bp.route('/register_facebook', methods=['POST'])
-def register_facebook():
+@auth_bp.route('/foauth', methods=['GET'])
+def facebook_oauth():
+    # todo once front end is moving along a bit
     pass
 
-
-@auth_bp.route('/login_facebook', methods=['POST'])
-def login_facebook():
-    pass
