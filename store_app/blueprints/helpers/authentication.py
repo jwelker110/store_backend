@@ -30,9 +30,15 @@ def confirm_token(token, secretKey):
 
 def create_jwt(payload):
     key = os.environ.get('JWT_CIPHER')
-    return None if key is None else jwt.encode(payload, key, algorithm='HS256')
+    try:
+        return jwt.encode(payload, key, algorithm='HS256')
+    except:
+        return None
 
 
 def decode_jwt(jwt_token):
     key = os.environ.get('JWT_CIPHER')
-    return None if key is None else jwt.decode(jwt_token, key=key, algorithms=['HS256'])
+    try:
+        return jwt.decode(jwt_token, key, algorithm='HS256')
+    except:
+        return None
