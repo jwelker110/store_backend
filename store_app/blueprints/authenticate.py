@@ -61,7 +61,7 @@ def register():
         db.session.commit()
 
         payload = {
-            "iss": user.username,
+            "username": user.username,
             "confirmed": user.confirmed
         }
         jwt_token = create_jwt(payload)
@@ -102,7 +102,7 @@ def login():
 
     if user.check_password_hash(password):
         payload = {
-            "iss": user.username,
+            "username": user.username,
             "confirmed": user.confirmed
         }
         return create_response({
@@ -124,7 +124,7 @@ def confirm():
     # grab the JWT payload
     payload = decode_jwt(jwt_token)
     # grab the JWT payload contents
-    username = payload.get('iss')
+    username = payload.get('username')
     confirmed = payload.get('confirmed')
 
     user = User.query.filter(username_lower=lower(username)).first()
@@ -187,7 +187,7 @@ def google_oauth():
             return create_response({}, status=500)
 
     payload = {
-        "iss": user.username,
+        "username": user.username,
         "confirmed": user.confirmed
     }
     return create_response({
