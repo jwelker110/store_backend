@@ -1,7 +1,5 @@
 from flask import Blueprint, request, url_for, redirect
 from json import loads
-import requests
-import os
 from string import lower, split
 import httplib2
 
@@ -26,6 +24,7 @@ def register():
     lastName = req.get('last_name')
     email = req.get('email')
     username = req.get('username')
+    password = req.get('password')
     recaptchaResponse = req.get('g-recaptcha-response')
 
     # the data to be returned to the client
@@ -33,19 +32,20 @@ def register():
         "jwt_token": None
     }
 
+    # todo uncomment when no longer testing
     # let's verify the user passed the recaptcha
-    r = requests.post('https://www.google.com/recaptcha/api/siteverify',
-                      data=dict(secret=os.environ.get('RECAPTCHA_SECRET'), response=recaptchaResponse))
-    resp = r.json()
-
-    if not resp['success']:  # they must be a robot or something
-        return create_response({}, status=403)
+    # r = requests.post('https://www.google.com/recaptcha/api/siteverify',
+    #                   data=dict(secret=os.environ.get('RECAPTCHA_SECRET'), response=recaptchaResponse))
+    # resp = r.json()
+    #
+    # if not resp['success']:  # they must be a robot or something
+    #     return create_response({}, status=403)
 
     if email is None or username is None:
         return create_response({}, status=400)
 
     # check if the user already exists
-    user = User.query.filter(username_lower=lower(username)).first()
+    user = User.query.filter_by(username_lower=lower(username)).first()
     if user is not None:  # todo maybe I should return error messages?
         return create_response({}, status=409)
 
@@ -55,7 +55,8 @@ def register():
             first_name=firstName,
             last_name=lastName,
             email=email,
-            username=username
+            username=username,
+            password=password
         )
         db.session.add(user)
         db.session.commit()
@@ -95,7 +96,7 @@ def login():
     if username is None or password is None:
         return create_response({}, status=400)
 
-    user = User.query.filter(username_lower=lower(username)).first()
+    user = User.query.filter_by(username_lower=lower(username)).first()
 
     if user is None:
         return create_response({}, status=400)
@@ -127,7 +128,7 @@ def confirm():
     username = payload.get('username')
     confirmed = payload.get('confirmed')
 
-    user = User.query.filter(username_lower=lower(username)).first()
+    user = User.query.filter_by(username_lower=lower(username)).first()
 
     if user is None or confirmed:
         return create_response({}, status=400)
@@ -167,7 +168,7 @@ def google_oauth():
     userinfo = loads(resp[1])
 
     # if the account already exists, sign in, else create the account and sign in.
-    user = User.query.filter(email_lower=userinfo.get('email')).first()
+    user = User.query.filter_by(email_lower=userinfo.get('email')).first()
     if user is None:
 
         try:
