@@ -3,6 +3,7 @@ from store_app import create_app
 from store_app.extensions import db
 from store_app.config import TestingConfig
 from store_app.database import User, Item, Category
+from store_app import dummy_data
 
 
 class StoreAppTestCase(unittest.TestCase):
@@ -22,33 +23,7 @@ class StoreAppTestCase(unittest.TestCase):
         self.ctx.pop()
 
     def init_data(self):
-        for i in range(10):
-            newUser = User(
-                username='Tester%s' % str(i),
-                email='Tester%s@email.com' % str(i),
-                password='lol123'
-            )
-            db.session.add(newUser)
-        db.session.commit()
-        for i in range(10):
-            newItem = Item(
-                name='TestItem%s' % str(i),
-                description='This is TestItem%s' % str(i),
-                price=10.50,
-                sale_price=10.50,
-                stock=10
-            )
-            db.session.add(newItem)
-        db.session.commit()
-        for i in range(5):
-            newCat = Category(
-                name='TestCategory%s' % str(i)
-            )
-
-    def assert_status(self, status, response, msg):
-        message = msg or 'Expected status %s but received status %s.' % (status, response.status)
-        self.assertEqual(status, response.status, message)
-
-    def endpointExists(self, ep):
-        req = self.client.get(ep)
-        self.assert_status('200 OK', req, 'Endpoint \'%s\' does not exist.' % ep)
+        db.drop_all(app=self.app)
+        db.init_app(app=self.app)
+        db.create_all(app=self.app)
+        dummy_data.create_test_data(self.app)
