@@ -94,7 +94,7 @@ def itemDetails_ep():
             item = []
         else:
             item = db.session.query(Item, ItemMeta).filter_by(name=name).outerjoin(ItemMeta).all()
-        return create_response({"item": item[0][0] if len(item) > 0 else [],
+        return create_response({"items": [item[0][0]] if len(item) > 0 else [],
                                 "item_meta": [i[1] for i in item]})
 
     elif request.method == 'PUT':
