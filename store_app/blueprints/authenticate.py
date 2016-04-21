@@ -143,6 +143,20 @@ def confirm():
     return create_response({}, status=400)
 
 
+@auth_bp.route('/reauth', methods=['POST'])
+def jwt_reauth():
+
+    req = loads(request.data)
+    jwt_token = req.get('jwt_token')
+
+    payload = decode_jwt(jwt_token)
+
+    if payload is None:
+        return create_response({}, status=401)
+
+    return create_response({'jwt_token': create_jwt(payload)})
+
+
 @auth_bp.route('/goauth', methods=['GET'])
 def google_oauth():
     """
