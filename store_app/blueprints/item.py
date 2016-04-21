@@ -85,7 +85,7 @@ def items_ep():
 
 
 @item_bp.route('/api/v1/items/details.json', methods=['GET', 'PUT'])
-def itemDetails_ep():
+def item_details_ep():
 
     if request.method == 'GET':
 
