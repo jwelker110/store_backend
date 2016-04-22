@@ -104,3 +104,16 @@ class TestItem(StoreAppTestCase):
         self.assertIsNotNone(item, 'Item123 was not created.')
         itemMeta = ItemMeta.query.filter_by(item_id=item.id).first()
         self.assertIsNotNone(itemMeta, 'Item123 Meta was not created.')
+
+    def test_createItemWithoutPermissions(self):
+        req = self.client.post('/api/v1/items.json', data=dumps({
+            "name": "Item1234",
+            "description": "This is the bestest item ever",
+            "price": 2596,
+            "sale_price": 1999,
+            "stock": 1337,
+            "meta_description": "This should not have been created.",
+            "meta_key": "Color",
+            "meta_value": "Black"
+        }))
+        self.assertIn('401', req.status, 'Attempting to create an item without permission does not return 401 Unauthorized.')
