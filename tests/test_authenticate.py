@@ -27,6 +27,16 @@ class TestAuthenticate(StoreAppTestCase):
         self.assertIsNotNone(user, 'User was not created.')
         # self.assertGreater(0, len(outbox), 'No emails have been captured via outbox.')
 
+    def test_registerUserAlreadyRegistered(self):
+        req = self.client.post('/register', content_type=self.ctype, data=dumps({
+            'username': 'Tester1',
+            'email': 'Tester1@email.com',
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'password': 'lol123'
+        }))
+        self.assertIn('409', req.status, 'Attempting to create an account that already exists does not return 409 Conflict.')
+
     def test_loginUser(self):
         req = self.client.post('/login', content_type=self.ctype, data=dumps({
             'username': 'Tester1',
