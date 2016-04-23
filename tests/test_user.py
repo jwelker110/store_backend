@@ -3,6 +3,10 @@ from json import loads
 
 
 class TestUser(StoreAppTestCase):
+    """
+    Tests the User related endpoints to ensure users are able to retrieve
+    information pertaining to user accounts.
+    """
 
     def setUp(self):
         super(TestUser, self).setUp()

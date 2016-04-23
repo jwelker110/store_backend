@@ -6,6 +6,10 @@ from store_app.database import Item, ItemMeta
 
 
 class TestItem(StoreAppTestCase):
+    """
+    Tests the Item related endpoints to ensure users are able to
+    view, edit, and create items.
+    """
 
     def setUp(self):
         super(TestItem, self).setUp()
@@ -116,4 +120,51 @@ class TestItem(StoreAppTestCase):
             "meta_key": "Color",
             "meta_value": "Black"
         }))
-        self.assertIn('401', req.status, 'Attempting to create an item without permission does not return 401 Unauthorized.')
+        self.assertIn('401', req.status, 'Attempting to create an item without permission does not return 401 UNAUTHORIZED.')
+
+    def test_updateItem(self):
+        req = self.client.post('/login', content_type=self.ctype, data=dumps({
+            'username': 'Tester1',
+            'password': 'lol123'
+        }))
+        data = loads(req.data)
+        jwt_token = data.get('jwt_token')
+
+        req = self.client.put('/api/v1/items/details.json', data=dumps({
+            "jwt_token": jwt_token,
+            "name": "Item1",
+            "description": "This is the new description",
+            "id": 1,
+            "price": 99.99,
+            "sale_price": 99.98,
+            "stock": 123,
+            "meta_description": "This is the updated meta description",
+            "meta_key": "Color",
+            "meta_value": "Purple Zebra"
+        }))
+        data = loads(req.data)
+
+        self.assertIn('200 OK', req.status, 'Unable to update user\'s item.')
+
+    def test_updateItemWithoutPermission(self):
+        req = self.client.put('/api/v1/items/details.json', data=dumps({
+            "jwt_token": None,
+            "name": "Item1",
+            "description": "This is the new description",
+            "id": 1,
+            "price": 99.99,
+            "sale_price": 99.98,
+            "stock": 123,
+            "meta_description": "This is the updated meta description",
+            "meta_key": "Color",
+            "meta_value": "Yellow Zebra"
+        }))
+        self.assertIn('401 UNAUTHORIZED', req.status,
+                      'Updating an item without permission returns %s instead of 401 UNAUTHORIZED.' % req.status)
+
+        req = self.client.get('/api/v1/items/details.json?name=Item1')
+        data = loads(req.data)
+        itemMeta = data.get('item_meta')
+        for im in itemMeta:
+            if im.get('id') == 1:
+                self.assertEqual(im.get('meta_value'), 'Purple', 'Item Meta was updated without permission.')

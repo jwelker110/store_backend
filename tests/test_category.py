@@ -3,6 +3,10 @@ from json import loads
 
 
 class TestCategory(StoreAppTestCase):
+    """
+    Tests the category related endpoints of the application to ensure users are able
+    to rertrieve category information.
+    """
 
     def setUp(self):
         super(TestCategory, self).setUp()

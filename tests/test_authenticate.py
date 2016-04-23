@@ -8,6 +8,10 @@ from store_app.database import User
 
 
 class TestAuthenticate(StoreAppTestCase):
+    """
+    Tests the authentication endpoints of the application to ensure users are able to
+    register, login, re-authenticate
+    """
 
     def setUp(self):
         super(TestAuthenticate, self).setUp()
@@ -69,3 +73,5 @@ class TestAuthenticate(StoreAppTestCase):
         newiat = payload.get('iat')
 
         self.assertGreater(newiat, iat, 'New token iat timestamp is from earlier than old iat timestap (Old token: %s | New token: %s)' % (iat, newiat))
+
+
