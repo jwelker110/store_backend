@@ -17,7 +17,7 @@ def users_ep():
 
 
 @user_bp.route('/api/v1/users/items.json', methods=['GET'])
-def usersItems_ep():
+def users_items_ep():
     offset = convertToInt(request.args.get('offset'))
     username = request.args.get('username')
 
