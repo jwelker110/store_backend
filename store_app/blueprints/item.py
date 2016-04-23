@@ -95,6 +95,7 @@ def item_details_ep():
             item = []
         else:
             item = db.session.query(Item, ItemMeta).filter_by(name=name).outerjoin(ItemMeta).all()
+        # tuples are returned from the query so must be accessed via index
         return create_response({"items": [item[0][0]] if len(item) > 0 else [],
                                 "item_meta": [i[1] for i in item]})
 
