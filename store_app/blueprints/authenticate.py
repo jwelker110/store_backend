@@ -78,8 +78,7 @@ def register():
         return create_response({}, status=500)
 
     except Exception as e:
-        print e.message
-
+        db.session.rollback()
         return create_response({}, status=500)
 
 
@@ -136,9 +135,13 @@ def confirm():
     email = confirm_token(token, user.confirm_secret)
 
     if email:
-        user.confirmed = True
-        db.session.commit()
-        return create_response({})
+        try:
+            user.confirmed = True
+            db.session.commit()
+            return create_response({})
+        except:
+            db.session.rollback()
+            return create_response({}, status=500)
 
     return create_response({}, status=400)
 
@@ -199,6 +202,7 @@ def google_oauth():
             db.session.commit()
 
         except:
+            db.session.rollback()
             return create_response({}, status=500)
 
     payload = {

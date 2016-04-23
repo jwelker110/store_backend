@@ -81,6 +81,7 @@ def items_ep():
             return create_response({})
 
         except:
+            db.session.rollback()
             return create_response({}, status=500)
 
 
@@ -159,5 +160,6 @@ def item_details_ep():
             return create_response({})
 
         except:
+            db.session.rollback()
             return create_response({}, status=500)
 
