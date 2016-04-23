@@ -121,10 +121,10 @@ def item_details_ep():
             return create_response({}, status=401)
 
         # get the item
-        item = Item.query.filter(name=name).first()
+        item = Item.query.filter_by(name=name).first()
 
         # get the item meta
-        item_meta = ItemMeta.query.filter(id=id).first()
+        item_meta = ItemMeta.query.filter_by(id=id).first()
 
         # does the item exist? how about the item meta?
         if item is None or item_meta is None:
