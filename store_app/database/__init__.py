@@ -1,1 +1,1 @@
-from schema import User, Category, Item, CategoryItems, ItemMeta
+from schema import User, Category, Item, CategoryItems

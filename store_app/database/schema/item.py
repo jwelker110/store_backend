@@ -10,11 +10,21 @@ class Item(db.Model):
     name = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(500))
     owner_name = db.Column(db.String(20), db.ForeignKey("User.username_lower"), nullable=False)
+    image_url = db.Column(db.String(25))
+    price = db.Column(db.Numeric)
+    sale_price = db.Column(db.Numeric)
+    stock = db.Column(db.Integer)
+    created_on = db.Column(db.DateTime)
 
-    def __init__(self, owner_name, name=None, description=None):
+    def __init__(self, owner_name, name=None, description=None, image_url=None, price=None, sale_price=None, stock=None):
         self.name = name
         self.description = description
         self.owner_name = lower(owner_name)
+        self.image_url = image_url
+        self.price = price
+        self.sale_price = sale_price
+        self.stock = stock
+        self.created_on = datetime.now()
 
     # def __repr__(self):
     #     return "<Item(%s)>" % self.name
@@ -24,44 +34,11 @@ class Item(db.Model):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "owner_name": self.owner_name
-        }
-
-
-class ItemMeta(db.Model):
-    __tablename__ = "Item_Meta"
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    item_id = db.Column(db.Integer, db.ForeignKey("Item.id"), nullable=False)
-    image_url = db.Column(db.String(100))
-    price = db.Column(db.Numeric, nullable=False)
-    sale_price = db.Column(db.Numeric, nullable=True)
-    stock = db.Column(db.Integer, nullable=False, default=0)
-    created_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    description = db.Column(db.String(120))
-    meta_key = db.Column(db.String(20))
-    meta_value = db.Column(db.String(20))
-
-    def __init__(self, item_id, price, image_url=None, sale_price=None, stock=0, description=None, meta_key=None, meta_value=None):
-        self.item_id = item_id
-        self.image_url = image_url
-        self.price = price
-        self.sale_price = sale_price
-        self.stock = stock
-        self.description = description
-        self.meta_key = meta_key
-        self.meta_value = meta_value
-
-    def dict(self):
-        return {
-            "id": self.id,
-            "item_id": self.item_id,
+            "owner_name": self.owner_name,
             "image_url": self.image_url,
             "price": self.price,
             "sale_price": self.sale_price,
             "stock": self.stock,
-            "created_on": self.created_on,
-            "description": self.description,
-            "meta_key": self.meta_key,
-            "meta_value": self.meta_value
+            "created_on": self.created_on
         }
+
