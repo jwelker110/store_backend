@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from json import loads
 from string import lower
 
-from store_app.database import Item, ItemMeta, CategoryItems, Category
+from store_app.database import Item, CategoryItems, Category
 from store_app.extensions import db
 from helpers import create_response, convertToInt, decode_jwt
 
@@ -11,7 +11,8 @@ item_bp = Blueprint('item_bp', __name__)
 
 @item_bp.route('/api/v1/items.json', methods=['GET', 'POST'])
 def items_ep():
-
+    # todo this needs to return an array of items, instead of returning a
+    # JSON object with an array of items attached
     if request.method == 'GET':
 
         offset = convertToInt(request.args.get('offset'))
@@ -34,15 +35,10 @@ def items_ep():
         # item info
         name = data.get('name')
         description = data.get('description')
-
-        # meta info
         price = data.get('price')
-        image_url = data.get('image_url')
         sale_price = data.get('sale_price')
+        image_url = data.get('image_url')
         stock = data.get('stock')
-        meta_description = data.get('meta_description')
-        meta_key = data.get('meta_key')
-        meta_value = data.get('meta_value')
 
         # jwt to ensure user is authorized
         payload = decode_jwt(data.get('jwt_token'))
@@ -61,23 +57,15 @@ def items_ep():
             item = Item(
                 owner_name=lower(payload.get('username')),
                 name=name,
-                description=description
+                description=description,
+                price=price,
+                image_url=image_url,
+                sale_price=sale_price,
+                stock=stock
             )
             db.session.add(item)
             db.session.commit()
 
-            item_meta = ItemMeta(
-                item_id=item.id,
-                price=price,
-                image_url=image_url,
-                sale_price=sale_price,
-                stock=stock,
-                description=meta_description,
-                meta_key=meta_key,
-                meta_value=meta_value
-            )
-            db.session.add(item_meta)
-            db.session.commit()
             return create_response({})
 
         except:
@@ -88,16 +76,17 @@ def items_ep():
 @item_bp.route('/api/v1/items/details.json', methods=['GET', 'PUT'])
 def item_details_ep():
 
+    # todo this needs to return a JSON object representing the item with the 
+    # item meta as an attribute of the object
     if request.method == 'GET':
 
         name = request.args.get('name')
         if name is None:
             item = []
         else:
-            item = db.session.query(Item, ItemMeta).filter_by(name=name).outerjoin(ItemMeta).all()
+            item = Item.query.filter_by(name=name).first()
         # tuples are returned from the query so must be accessed via index
-        return create_response({"items": [item[0][0]] if len(item) > 0 else [],
-                                "item_meta": [i[1] for i in item]})
+        return create_response({"item": item})
 
     elif request.method == 'PUT':
 
@@ -106,15 +95,10 @@ def item_details_ep():
         # item info
         name = data.get('name')
         description = data.get('description')
-
-        # meta info
-        id = data.get('id')
+        image_url = data.get('image_url')
         price = data.get('price')
         sale_price = data.get('sale_price')
         stock = data.get('stock')
-        meta_description = data.get('meta_description')
-        meta_key = data.get('meta_key')
-        meta_value = data.get('meta_value')
 
         payload = decode_jwt(data.get('jwt_token'))
 
@@ -124,15 +108,8 @@ def item_details_ep():
         # get the item
         item = Item.query.filter_by(name=name).first()
 
-        # get the item meta
-        item_meta = ItemMeta.query.filter_by(id=id).first()
-
         # does the item exist? how about the item meta?
-        if item is None or item_meta is None:
-            return create_response({}, status=400)
-
-        # does the item meta belong to the item?
-        if item_meta.item_id != item.id:
+        if item is None:
             return create_response({}, status=400)
 
         # does the user actually own the item?
@@ -145,16 +122,10 @@ def item_details_ep():
             # everything checks out, update the item
             item.name = item.name if name is None else name
             item.description = item.description if description is None else description
-
-            db.session.commit()
-
-            # the item has been updated, update the meta
-            item_meta.price = item_meta.price if price is None else price
-            item_meta.sale_price = item_meta.sale_price if sale_price is None else sale_price
-            item_meta.stock = item_meta.stock if stock is None else stock
-            item_meta.meta_description = item_meta.meta_description if meta_description is None else meta_description
-            item_meta.meta_key = item_meta.meta_key if meta_key is None else meta_key
-            item_meta.meta_value = item_meta.meta_value if meta_value is None else meta_value
+            item.image_url = item.image_url if image_url is None else image_url
+            item.price = item.price if price is None else price
+            item.sale_price = item.sale_price if sale_price is None else sale_price
+            item.stock = item.stock if stock is None else stock
 
             db.session.commit()
 
