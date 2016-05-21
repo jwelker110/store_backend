@@ -20,6 +20,7 @@ class User(db.Model):
     email_lower = db.Column(db.String(250), nullable=False, unique=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     username_lower = db.Column(db.String(20), nullable=False, unique=True)
+    avatar_url = db.Column(db.String(25))
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
     admin = db.Column(db.Boolean, nullable=False, default=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
@@ -28,7 +29,8 @@ class User(db.Model):
 
     def __init__(self, oa_id=None, first_name=None,
                  last_name=None, email=None, username=None,
-                 password=None, admin=False, confirmed=False):
+                 avatar_url=None, password=None, admin=False, 
+                 confirmed=False):
         self.oa_id = oa_id
         self.first_name = first_name
         self.last_name = last_name
@@ -36,11 +38,13 @@ class User(db.Model):
         self.email_lower = lower(email)
         self.username = username
         self.username_lower = lower(username)
+        self.avatar_url = avatar_url
         self.admin = admin
         self.confirmed = confirmed
         if self.confirmed:
             self.confirmed_on = datetime.now()
-        self.generate_password_hash(password)
+        if password is not None:
+            self.generate_password_hash(password)
         self.generate_secret()
 
     def __repr__(self):
@@ -63,5 +67,6 @@ class User(db.Model):
     def dict(self):
         return {
             "username": self.username,
+            "avatar_url": self.avatar_url,
             "registered_on": self.registered_on
         }
