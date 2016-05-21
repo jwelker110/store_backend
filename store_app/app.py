@@ -1,6 +1,6 @@
 from flask import Flask
 from json import loads
-from extensions import db, mail, bcrypt
+from extensions import db
 from config import DevelopmentConfig
 from blueprints import user_bp, item_bp, category_bp, auth_bp
 from blueprints.helpers import create_response
@@ -51,10 +51,6 @@ def configure_extensions(app):
     db.create_all(app=app)
     from dummy_data import create_test_data
     create_test_data(app)
-
-    mail.init_app(app)
-
-    bcrypt.init_app(app)
 
 
 def configure_blueprints(app, blueprints):

@@ -1,8 +1,7 @@
 from datetime import datetime
 from string import lower
 
-from store_app.extensions import db, bcrypt
-from store_app.blueprints.helpers import generate_secret_key, confirm_token
+from store_app.extensions import db
 
 
 class User(db.Model):
@@ -42,7 +41,6 @@ class User(db.Model):
         self.confirmed = confirmed
         if self.confirmed:
             self.confirmed_on = datetime.now()
-        self.generate_secret()
 
     def __repr__(self):
         return "<User(%s)>" % self.username

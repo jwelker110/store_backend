@@ -1,13 +1,10 @@
-from flask import Blueprint, request, url_for, redirect
+from flask import Blueprint, request
 from json import loads
 from string import lower, split
-import httplib2
 
 from store_app.database import User
-from helpers import create_response, send_confirmation_email, generate_token, create_jwt, decode_jwt, confirm_token
+from helpers import create_response, create_jwt, decode_jwt
 from store_app.extensions import db
-
-from oauth2client import client
 
 auth_bp = Blueprint("auth_bp", __name__)
 

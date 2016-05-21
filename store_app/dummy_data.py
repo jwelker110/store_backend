@@ -1,5 +1,5 @@
 from store_app.app import db
-from database import User, Item, Category, CategoryItems
+from database import User, Item, Category
 
 
 def create_test_data(app):

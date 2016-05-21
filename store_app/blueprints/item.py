@@ -3,7 +3,7 @@ from json import loads
 from string import lower
 from sqlalchemy import desc
 
-from store_app.database import Item, CategoryItems, Category
+from store_app.database import Item
 from store_app.extensions import db
 from helpers import create_response, convertToInt, decode_jwt
 
