@@ -28,9 +28,6 @@ class Item(db.Model):
         self.stock = stock
         self.created_on = datetime.now()
 
-    # def __repr__(self):
-    #     return "<Item(%s)>" % self.name
-
     def dict(self):
         return {
             "id": self.id,

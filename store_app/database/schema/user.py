@@ -13,7 +13,6 @@ class User(db.Model):
 
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
-    password_hash = db.Column(db.String(250))
     confirmed_on = db.Column(db.DateTime)
 
     email = db.Column(db.String(250), nullable=False, unique=True)
@@ -29,7 +28,7 @@ class User(db.Model):
 
     def __init__(self, oa_id=None, first_name=None,
                  last_name=None, email=None, username=None,
-                 avatar_url=None, password=None, admin=False, 
+                 avatar_url=None, admin=False,
                  confirmed=False):
         self.oa_id = oa_id
         self.first_name = first_name
@@ -43,26 +42,10 @@ class User(db.Model):
         self.confirmed = confirmed
         if self.confirmed:
             self.confirmed_on = datetime.now()
-        if password is not None:
-            self.generate_password_hash(password)
         self.generate_secret()
 
     def __repr__(self):
         return "<User(%s)>" % self.username
-
-    def generate_password_hash(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password)
-
-    def check_password_hash(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
-
-    def generate_secret(self):
-        self.confirm_secret = generate_secret_key()
-        self.confirm_secret_created_on = datetime.now()
-
-    def confirm_email(self, token):
-        email = confirm_token(token=token, secretKey=self.confirm_secret)
-        return email == self.email
 
     def dict(self):
         return {
