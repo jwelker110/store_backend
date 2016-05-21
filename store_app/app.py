@@ -3,6 +3,7 @@ from json import loads
 from extensions import db, mail, bcrypt
 from config import DevelopmentConfig
 from blueprints import user_bp, item_bp, category_bp, auth_bp
+from blueprints.helpers import create_response
 
 import os
 
@@ -30,12 +31,13 @@ def configure_processors(app):
         # TODO would be changed in prod
         response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         response.headers.add('Content-Type', 'application/json')
         return response
 
     @app.errorhandler(404)
     def error_handler(error):
-        return 'Error', 404
+        return create_response({}, status=404)
 
     @app.route('/')
     def index():
@@ -45,10 +47,10 @@ def configure_processors(app):
 def configure_extensions(app):
     # setup SQLAlchemy
     db.init_app(app)
-    # db.drop_all(app=app)
+    db.drop_all(app=app)
     db.create_all(app=app)
     from dummy_data import create_test_data
-    # create_test_data(app)
+    create_test_data(app)
 
     mail.init_app(app)
 
