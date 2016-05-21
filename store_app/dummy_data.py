@@ -8,7 +8,6 @@ def create_test_data(app):
             user = User(
                 email="tester%s@email.com" % str(i),
                 username="Tester%s" % str(i),
-                password="lol123",
                 confirmed=True
             )
             db.session.add(user)
@@ -30,18 +29,4 @@ def create_test_data(app):
                 stock=i,
             )
             db.session.add(item)
-        db.session.commit()
-        for i in range(1, 5):
-            catItem = CategoryItems(
-                category_id=i,
-                item_id=i
-            )
-            db.session.add(catItem)
-        db.session.commit()
-        for i in range(1, 5):
-            catItem = CategoryItems(
-                category_id=5 - i,
-                item_id=i
-            )
-            db.session.add(catItem)
         db.session.commit()
