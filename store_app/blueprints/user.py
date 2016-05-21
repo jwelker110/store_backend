@@ -1,9 +1,8 @@
 from flask import Blueprint, request
 from string import lower
-from jwt import encode, decode
 from sqlalchemy import desc
 
-from store_app.database import User, Item, Category
+from store_app.database import User, Item
 from helpers import create_response, convertToInt
 
 user_bp = Blueprint("user_bp", __name__)
