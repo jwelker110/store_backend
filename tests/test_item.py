@@ -34,6 +34,7 @@ class TestItem(StoreAppTestCase):
         self.assertEqual(20, len(items), 'Expected 20 items, retrieved %s.' % str(len(items)))
 
     def test_getItemsByCategory(self):
+        # todo rewrite
         req = self.client.get('/api/v1/items.json?category=Category1')
         data = loads(req.data)
         items = data.get('items')
@@ -67,6 +68,7 @@ class TestItem(StoreAppTestCase):
         self.assertIn('id', item, 'Item id not found in response.')
         self.assertIn('name', item, 'Item name not found in response.')
         self.assertIn('description', item, 'Item description not found in response.')
+        self.assertIn('category', item, 'Item category not found in response.')
         self.assertIn('image_url', item, 'Item image_url not found in response.')
         self.assertIn('price', item, 'Item price not found in response.')
         self.assertIn('sale_price', item, 'Item sale_price not found in response.')
@@ -75,11 +77,8 @@ class TestItem(StoreAppTestCase):
         self.assertIn('owner_name', item, 'Item owner_name not found in response.')
 
     def test_createItem(self):
-        # first login and retrieve the jwt
-        req = self.client.post('/login', data=dumps({
-            'username': 'Tester1',
-            'password': 'lol123'
-        }))
+        # todo rewrite the login
+        req = None
         data = loads(req.data)
         jwt_token = data.get('jwt_token')
 
@@ -109,10 +108,8 @@ class TestItem(StoreAppTestCase):
         self.assertIn('401', req.status, 'Attempting to create an item without permission does not return 401 UNAUTHORIZED.')
 
     def test_updateItem(self):
-        req = self.client.post('/login', content_type=self.ctype, data=dumps({
-            'username': 'Tester1',
-            'password': 'lol123'
-        }))
+        # todo rewrite login user to update their item
+        req = None
         data = loads(req.data)
         jwt_token = data.get('jwt_token')
 
