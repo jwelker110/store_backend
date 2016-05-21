@@ -12,8 +12,6 @@ item_bp = Blueprint('item_bp', __name__)
 
 @item_bp.route('/api/v1/items.json', methods=['GET', 'POST'])
 def items_ep():
-    # todo this needs to return an array of items, instead of returning a
-    # JSON object with an array of items attached
     if request.method == 'GET':
 
         offset = convertToInt(request.args.get('offset'))
@@ -23,7 +21,7 @@ def items_ep():
             items = Item.query.order_by(desc(Item.id)).offset(offset).limit(10).all()
         else:
             items = db.session.query(Item).order_by(desc(Item.id))\
-                .filter_by(name=category).offset(offset).limit(10).all()
+                .filter_by(category=category).offset(offset).limit(10).all()
 
         return create_response({"items": items})
 
@@ -34,7 +32,7 @@ def items_ep():
         # item info
         name = data.get('name')
         description = data.get('description')
-        category_id = data.get('category_id')
+        category = data.get('category')
         price = data.get('price')
         sale_price = data.get('sale_price')
         image_url = data.get('image_url')
@@ -51,7 +49,7 @@ def items_ep():
         if payload.get('confirmed') is False:
             return create_response({}, status=401)
 
-        if name is None or price is None or category_id is None:
+        if name is None or price is None:
             return create_response({}, status=400)
 
         try:
@@ -60,20 +58,13 @@ def items_ep():
                 owner_name=lower(payload.get('username')),
                 name=name,
                 description=description,
+                category=category,
                 price=price,
                 image_url=image_url,
                 sale_price=sale_price,
                 stock=stock
             )
             db.session.add(item)
-            db.session.commit()
-
-            catItem = CategoryItems(
-                category_id=category_id,
-                item_id=item.id
-            )
-
-            db.session.add(catItem)
             db.session.commit()
 
             return create_response({})
@@ -85,9 +76,6 @@ def items_ep():
 
 @item_bp.route('/api/v1/items/details.json', methods=['GET', 'PUT', 'POST'])
 def item_details_ep():
-
-    # todo this needs to return a JSON object representing the item with the 
-    # item meta as an attribute of the object
     if request.method == 'GET':
 
         name = request.args.get('name')
@@ -129,6 +117,7 @@ def item_details_ep():
         itemId = data.get('id')
         name = data.get('name')
         description = data.get('description')
+        category = data.get('category')
         image_url = data.get('image_url')
         price = data.get('price')
         sale_price = data.get('sale_price')
@@ -157,6 +146,7 @@ def item_details_ep():
             # everything checks out, update the item
             item.name = item.name if name is None else name
             item.description = item.description if description is None else description
+            item.category = item.category if category is None else category
             item.image_url = item.image_url if image_url is None else image_url
             item.price = item.price if price is None else price
             item.sale_price = item.sale_price if sale_price is None else sale_price
