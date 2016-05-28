@@ -1,11 +1,13 @@
 from flask import Blueprint, request
-from json import loads
-from string import lower
+from json import loads, dumps
+from string import lower, replace
 from sqlalchemy import desc
+from werkzeug import secure_filename
+from os import getcwd, remove
 
 from store_app.database import Item
 from store_app.extensions import db
-from helpers import create_response, convertToInt, decode_jwt
+from helpers import create_response, convertToInt, decode_jwt, allowed_filename, isNullOrUndefined
 
 item_bp = Blueprint('item_bp', __name__)
 
@@ -20,24 +22,23 @@ def items_ep():
         if category is None:
             items = Item.query.order_by(desc(Item.id)).offset(offset).limit(10).all()
         else:
-            items = db.session.query(Item).order_by(desc(Item.id))\
+            items = Item.query.order_by(desc(Item.id))\
                 .filter_by(category=category).offset(offset).limit(10).all()
 
         return create_response({"items": items})
 
     elif request.method == 'POST':
+        filename = 'uploads/common/placeholder.jpg'
 
         data = loads(request.data)
 
         # item info
         name = data.get('name')
+        name = name.replace('+', ' ')
         description = data.get('description')
         category = data.get('category')
         price = data.get('price')
         sale_price = data.get('sale_price')
-        image_url = data.get('image_url')
-        if image_url is None:
-            image_url = 'uploads/image.jpg'
         stock = data.get('stock')
 
         # jwt to ensure user is authorized
@@ -46,21 +47,25 @@ def items_ep():
         if payload is None:
             return create_response({}, status=401)
 
-        if payload.get('confirmed') is False:
-            return create_response({}, status=401)
-
+        # make sure we have a name and price given
         if name is None or price is None:
+            return create_response({}, status=400)
+
+        # does the item already exist?
+        item = Item.query.filter_by(name_lower=lower(name)).first()
+
+        if item is not None:
             return create_response({}, status=400)
 
         try:
 
             item = Item(
-                owner_name=lower(payload.get('username')),
+                owner_name=payload.get('username'),
                 name=name,
-                description=description,
+                description=None if isNullOrUndefined(description) else description,
                 category=category,
                 price=price,
-                image_url=image_url,
+                image_url=filename,
                 sale_price=sale_price,
                 stock=stock
             )
@@ -72,6 +77,64 @@ def items_ep():
         except:
             db.session.rollback()
             return create_response({}, status=500)
+
+
+@item_bp.route('/api/v1/items/image', methods=['PUT'])
+def item_image_ep():
+    # if a file is given, we'll try to associate it with it's item
+    # if the file is not accepted, we will leave the current file intact
+    # if a file is not given (empty post), we will remove the current file
+    # that is not the default and update our item with the default placeholder
+    # image
+    jwt_token = request.form.get('jwt_token')
+    name = request.form.get('name')
+    name = name.replace('+', ' ')
+
+    image_file = request.files.get('image')
+
+    payload = decode_jwt(jwt_token)
+    if payload is None or isNullOrUndefined(name):
+        return create_response({}, status=400)
+
+    username = payload.get('username')
+
+    # make sure the item exists
+    item = Item.query.filter_by(name_lower=lower(name), owner_name=lower(username)).first()
+    if item is None:
+        return create_response({}, status=400)
+
+    filename = 'uploads/common/placeholder.jpg'
+    newFilename = None
+
+    if image_file is not None:
+        if allowed_filename(image_file.filename):
+            try:
+                ext = image_file.filename.split('.', 1)[1]
+                print name.split(' ')
+                print '_'.join(name.split(' '))
+                name = '_'.join(name.split(' '))
+                newFilename = 'uploads/' + secure_filename(name + '.' + ext)
+                print newFilename
+                f = open(getcwd() + '/' + newFilename, 'w')
+                f.write(image_file.read())
+                f.close()
+            except:
+                return create_response({}, status=500)
+        else:
+            return create_response({}, status=400)
+
+    try:
+        # get rid of existing file
+        if item.image_url != filename:
+                remove(getcwd() + '/' + item.image_url)
+
+        item.image_url = filename if newFilename is None else newFilename
+
+        db.session.commit()
+        return create_response({})
+    except:
+        db.session.rollback()
+        return create_response({}, status=500)
 
 
 @item_bp.route('/api/v1/items/details.json', methods=['GET', 'PUT', 'POST'])
@@ -116,12 +179,11 @@ def item_details_ep():
         # item info
         itemId = data.get('id')
         name = data.get('name')
+        name = name.replace('+', ' ')
         description = data.get('description')
         category = data.get('category')
-        image_url = data.get('image_url')
         price = data.get('price')
         sale_price = data.get('sale_price')
-        image_url = data.get('image_url')
         stock = data.get('stock')
 
         payload = decode_jwt(data.get('jwt_token'))
@@ -130,16 +192,13 @@ def item_details_ep():
             return create_response({}, status=401)
 
         # get the item
-        item = Item.query.filter_by(id=itemId).first()
+        item = Item.query.filter_by(
+            id=itemId, 
+            owner_name=lower(payload.get('username'))).first()
 
         # does the item exist? how about the item meta?
         if item is None:
             return create_response({}, status=400)
-
-        # does the user actually own the item?
-        if item.owner_name != lower(payload.get('username')):
-            # can't change someone else' item
-            return create_response({}, status=401)
 
         try:
 
@@ -147,10 +206,8 @@ def item_details_ep():
             item.name = item.name if name is None else name
             item.description = item.description if description is None else description
             item.category = item.category if category is None else category
-            item.image_url = item.image_url if image_url is None else image_url
             item.price = item.price if price is None else price
             item.sale_price = item.sale_price if sale_price is None else sale_price
-            item.image_url = item.image_url if image_url is None else image_url
             item.stock = item.stock if stock is None else stock
 
             db.session.commit()
