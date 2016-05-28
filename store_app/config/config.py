@@ -13,6 +13,7 @@ class BaseConfig(object):
     UPLOAD_PATH = os.path.join(PROJECT_ROOT, 'uploads')
     CONFIG_PATH = _config_path
     SECRET_KEY_PATH = _secret_key_path
+    MAX_CONTENT_LENGTH = (1024 ** 2) / 2
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
@@ -25,7 +26,7 @@ class DevelopmentConfig(BaseConfig):
     TESTING = True
 
 
-class ProductionConfig(BaseConfig):
+class ProductionConfig(BaseConfig):  # todo change to postgres pls
     SQLALCHEMY_DATABASE_URI = 'mysql://username:password@server/db'
     DEBUG = False
     TESTING = False
