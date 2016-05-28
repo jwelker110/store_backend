@@ -30,7 +30,7 @@ def configure_processors(app):
     def after_request(response):
         # TODO would be changed in prod
         response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, PUT, POST')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         response.headers.add('Content-Type', 'application/json')
         return response
@@ -38,10 +38,6 @@ def configure_processors(app):
     @app.errorhandler(404)
     def error_handler(error):
         return create_response({}, status=404)
-
-    @app.route('/')
-    def index():
-        return 'hello world'
 
 
 def configure_extensions(app):
