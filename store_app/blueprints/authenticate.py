@@ -1,6 +1,9 @@
 from flask import Blueprint, request
 from json import loads
 from string import lower, split
+import httplib2
+
+from oauth2client import client, crypt
 
 from store_app.database import User
 from helpers import create_response, create_jwt, decode_jwt
@@ -32,9 +35,17 @@ def google_oauth():
     :return: JWT with the claims for the user to be sent on future requests
     """
 
-    req = loads(request.data)
-    email = req.get('email')
-    oa_id = req.get('oa_id')
+    data = loads(request.data)
+    access_token = data.get('access_token')
+
+    cred = client.AccessTokenCredentials(access_token, 'Store-App/v1')
+    http = cred.authorize(httplib2.Http())
+
+    r = http.request('https://www.googleapis.com/oauth2/v3/userinfo')
+    resp = loads(r[1])
+
+    email = resp.get('email')
+    oa_id = resp.get('sub')
 
     if email is None or oa_id is None:
         return create_response({}, status=400)
@@ -67,4 +78,3 @@ def google_oauth():
     return create_response({
         "jwt_token": create_jwt(payload)
     })
-
