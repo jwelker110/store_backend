@@ -8,9 +8,10 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False, unique=True)
+    name_lower = db.Column(db.String(250), nullable=False, unique=True)
     description = db.Column(db.String(500))
     category = db.Column(db.String(50), db.ForeignKey("Category.name"), nullable=False)
-    owner_name = db.Column(db.String(20), db.ForeignKey("User.username_lower"), nullable=False)
+    owner_name = db.Column(db.String(20), db.ForeignKey("User.username"), nullable=False)
     image_url = db.Column(db.String(25))
     price = db.Column(db.Numeric, nullable=False)
     sale_price = db.Column(db.Numeric)
@@ -19,6 +20,7 @@ class Item(db.Model):
 
     def __init__(self, owner_name, name=None, description=None, category="Other", image_url=None, price=None, sale_price=None, stock=None):
         self.name = name
+        self.name_lower = lower(name)
         self.description = description
         self.category = category
         self.owner_name = lower(owner_name)
