@@ -38,22 +38,33 @@ def google_oauth():
     data = loads(request.data)
     access_token = data.get('access_token')
 
-    cred = client.AccessTokenCredentials(access_token, 'Store-App/v1')
-    http = cred.authorize(httplib2.Http())
+    if access_token is None:
+        return create_response({}, status=400)
 
-    r = http.request('https://www.googleapis.com/oauth2/v3/userinfo')
-    resp = loads(r[1])
+    try:
+        # we are going to try to use this access token to retrieve the user's
+        # info and create their account.
+        cred = client.AccessTokenCredentials(access_token, 'Store-App/v1')
+        http = cred.authorize(httplib2.Http())
 
+        r = http.request('https://www.googleapis.com/oauth2/v3/userinfo')
+        resp = loads(r[1])
+    except:
+        return create_response({}, status=500)
+
+    # so we were able to get user's info, let's make sure we
+    # have the correct info
     email = resp.get('email')
-    oa_id = resp.get('sub')
+    oa_id = resp.get('sub')  # per Google, equiv to user ID
 
+    # can't create a blank account now, can we?
     if email is None or oa_id is None:
         return create_response({}, status=400)
 
     # if the account already exists, sign in, else create the account and sign in.
     user = User.query.filter_by(email_lower=lower(email)).first()
-    if user is None:
 
+    if user is None:
         try:
             # create the account
             user = User(
@@ -69,12 +80,13 @@ def google_oauth():
             db.session.rollback()
             return create_response({}, status=500)
 
+    # the user is signed in so let's return a JWT with their info!
     payload = {
         "username": user.username,
         "isOauth": True,
-        "avatarUrl": user.avatar_url,
         "confirmed": user.confirmed
     }
+
     return create_response({
         "jwt_token": create_jwt(payload)
     })

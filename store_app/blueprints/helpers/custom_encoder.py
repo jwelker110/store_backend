@@ -1,6 +1,7 @@
 import decimal
 import datetime
 from json import dumps
+from flask import jsonify
 
 
 def sqlalchemy_enc(obj):

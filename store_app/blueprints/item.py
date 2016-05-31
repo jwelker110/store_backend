@@ -34,7 +34,6 @@ def items_ep():
 
         # item info
         name = data.get('name')
-        name = name.replace('+', ' ')
         description = data.get('description')
         category = data.get('category')
         price = data.get('price')
@@ -50,6 +49,8 @@ def items_ep():
         # make sure we have a name and price given
         if name is None or price is None:
             return create_response({}, status=400)
+
+        name = name.replace('+', ' ')
 
         # does the item already exist?
         item = Item.query.filter_by(name_lower=lower(name)).first()
@@ -110,11 +111,8 @@ def item_image_ep():
         if allowed_filename(image_file.filename):
             try:
                 ext = image_file.filename.split('.', 1)[1]
-                print name.split(' ')
-                print '_'.join(name.split(' '))
                 name = '_'.join(name.split(' '))
                 newFilename = 'uploads/' + secure_filename(name + '.' + ext)
-                print newFilename
                 f = open(getcwd() + '/' + newFilename, 'w')
                 f.write(image_file.read())
                 f.close()
