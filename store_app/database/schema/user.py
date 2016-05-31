@@ -18,7 +18,6 @@ class User(db.Model):
     email_lower = db.Column(db.String(250), nullable=False, unique=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     username_lower = db.Column(db.String(20), nullable=False, unique=True)
-    avatar_url = db.Column(db.String(25))
     registered_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
     admin = db.Column(db.Boolean, nullable=False, default=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
@@ -36,7 +35,6 @@ class User(db.Model):
         self.email_lower = lower(email)
         self.username = username
         self.username_lower = lower(username)
-        self.avatar_url = avatar_url
         self.admin = admin
         self.confirmed = confirmed
         if self.confirmed:
@@ -48,6 +46,5 @@ class User(db.Model):
     def dict(self):
         return {
             "username": self.username,
-            "avatar_url": self.avatar_url,
             "registered_on": self.registered_on
         }

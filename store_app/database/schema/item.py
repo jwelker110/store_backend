@@ -7,12 +7,12 @@ class Item(db.Model):
     __tablename__ = 'Item'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(250), nullable=False, unique=True)
-    name_lower = db.Column(db.String(250), nullable=False, unique=True)
-    description = db.Column(db.String(500))
-    category = db.Column(db.String(50), db.ForeignKey("Category.name"), nullable=False)
+    name = db.Column(db.String(30), nullable=False, unique=True)
+    name_lower = db.Column(db.String(30), nullable=False, unique=True)
+    description = db.Column(db.String(250))
+    category = db.Column(db.String(30), db.ForeignKey("Category.name"), nullable=False)
     owner_name = db.Column(db.String(20), db.ForeignKey("User.username"), nullable=False)
-    image_url = db.Column(db.String(25))
+    image_url = db.Column(db.String(100))
     price = db.Column(db.Numeric, nullable=False)
     sale_price = db.Column(db.Numeric)
     stock = db.Column(db.Integer)
