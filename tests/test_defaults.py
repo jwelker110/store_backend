@@ -12,7 +12,7 @@ class TestDefault(StoreAppTestCase):
         self.assertIn('404', req.status, 'Page not found error was not returned for page not found.')
 
     def test_methodNotSupported(self):
-        req = self.client.get('/login')
+        req = self.client.get('/goauth')
         self.assertIn('405', req.status, 'Methods allowed for the endpoint are not being enforced.')
 
     def test_unauthorizedRequest(self):

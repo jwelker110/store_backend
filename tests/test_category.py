@@ -16,4 +16,4 @@ class TestCategory(StoreAppTestCase):
         req = self.client.get('/api/v1/categories.json')
         data = loads(req.data)
         cats = data.get('categories')
-        self.assertEqual(5, len(cats), 'Did not retrieve 5 categories.')
+        self.assertEqual(6, len(cats), 'Did not retrieve 6 categories.')
