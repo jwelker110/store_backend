@@ -1,3 +1,5 @@
+from string import lower
+
 from store_app.app import db
 from database import User, Item, Category
 
@@ -17,13 +19,17 @@ def create_test_data(app):
                 name="Category%s" % str(i)
             )
             db.session.add(cat)
+        cat = Category(
+            name='Other'
+        )
+        db.session.add(cat)
         db.session.commit()
         for i in range(1, 21):
             item = Item(
                 name="Item%s" % str(i),
                 description="This is item %s" % str(i),
                 owner_name="Tester%s" % str(i),
-                image_url="uploads/image.jpg",
+                image_url="uploads/common/placeholder.jpg",
                 price=i*10.50,
                 sale_price=i*8.75,
                 stock=i,
