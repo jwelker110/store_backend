@@ -2,7 +2,6 @@ from flask import Blueprint, request
 from json import loads, dumps
 from string import lower, replace
 from sqlalchemy import desc
-from werkzeug import secure_filename
 from os import getcwd, remove
 
 from store_app.database import Item
@@ -46,8 +45,8 @@ def items_ep():
         if payload is None:
             return create_response({}, status=401)
 
-        # make sure we have a name and price given
-        if name is None or price is None:
+        # make sure we have a name, category, and price given
+        if name is None or price is None or category is None:
             return create_response({}, status=400)
 
         name = name.replace('+', ' ')
@@ -89,13 +88,14 @@ def item_image_ep():
     # image
     jwt_token = request.form.get('jwt_token')
     name = request.form.get('name')
-    name = name.replace('+', ' ')
 
     image_file = request.files.get('image')
 
     payload = decode_jwt(jwt_token)
     if payload is None or isNullOrUndefined(name):
         return create_response({}, status=400)
+
+    name = name.replace('+', ' ')
 
     username = payload.get('username')
 
@@ -177,7 +177,6 @@ def item_details_ep():
         # item info
         itemId = data.get('id')
         name = data.get('name')
-        name = name.replace('+', ' ')
         description = data.get('description')
         category = data.get('category')
         price = data.get('price')
@@ -188,6 +187,11 @@ def item_details_ep():
 
         if payload is None:
             return create_response({}, status=401)
+
+        if name is None or price is None or category is None:
+            return create_response({}, status=400)
+
+        name = name.replace('+', ' ')
 
         # get the item
         item = Item.query.filter_by(
