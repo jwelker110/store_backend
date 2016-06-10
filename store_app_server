@@ -4,12 +4,12 @@ server {
 
     location / {
         include uwsgi_params;
-        uwsgi_pass unix:/home/vagrant/backend/store_backend/store_app.sock;
+        uwsgi_pass unix:/home/vagrant/store_backend/store_app.sock;
     }
 }
 
 server {
-    root /home/vagrant/frontend/store_frontend/dist/;
+    root /home/vagrant/store_frontend/dist/;
 
     location / {
     }
@@ -19,7 +19,7 @@ server {
     }
 
     location ~ \.(jpg|JPG|jpeg|JPEG|png) {
-        root /home/vagrant/backend/store_backend;
+        root /home/vagrant/store_backend;
         try_files $uri =404;
     }
 }
