@@ -84,7 +84,7 @@ sudo npm install -g yo gulp bower
 echo "Installing bower deps meow..."
 echo "-----------------------------"
 # install bower dep
-bower install
+bower install --allow-root
 
 # generate our project for the first time!
 echo "Gulp may take some time to run (5 minutes)..."
