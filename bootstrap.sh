@@ -5,7 +5,7 @@
 # place it in /etc/nginx/sites-available/
 
 echo "Starting the provision of this Vagrant machine..."
-sudo -u vagrant bash <<EOF
+
 # make sure we have the req packages
 sudo apt-get update
 sudo apt-get install -y python-pip python-dev libffi-dev nginx build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev
@@ -84,11 +84,10 @@ sudo npm install -g yo gulp bower
 echo "Installing bower deps meow..."
 echo "-----------------------------"
 # install bower dep
-bower install --allow-root
+bower install
 
 # generate our project for the first time!
 echo "Gulp may take some time to run (5 minutes)..."
 gulp
 
 sudo service nginx reload
-EOF
