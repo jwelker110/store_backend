@@ -18,7 +18,7 @@ sudo wget https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
 sudo tar xzf Python-2.7.10.tgz
 sudo ./configure
 sudo make altinstall
-cd
+cd /home/vagrant
 
 # create the backend
 # ------------------
@@ -48,7 +48,7 @@ echo "Setting up uWSGI and nginx"
 echo "--------------------------"
 # setup uWSGI according to 
 # https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-14-04
-cd
+cd /home/vagrant
 cd store_backend/
 sudo mv store_app.conf /etc/init/
 sudo start store_app
@@ -56,7 +56,7 @@ sudo start store_app
 # remove the default site from nginx please
 sudo mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default_copy
 
-cd
+cd /home/vagrant
 cd store_backend
 sudo mv store_app_server /etc/nginx/sites-available/
 sudo ln -s /etc/nginx/sites-available/store_app_server /etc/nginx/sites-enabled
@@ -64,7 +64,7 @@ sudo ln -s /etc/nginx/sites-available/store_app_server /etc/nginx/sites-enabled
 echo "Creating the frontend now..."
 echo "----------------------------"
 
-cd
+cd /home/vagrant
 git clone https://github.com/jwelker110/store_frontend.git
 cd store_frontend
 git checkout udacity
