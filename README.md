@@ -10,6 +10,22 @@ I chose to create a generic store inventory that allows users to add their own l
 associated cost, stock, description, and optional item image. If an image is not provided, a generic placeholder is used 
 instead.
 
+### Technologies Used
+
+- [JWT](https://jwt.io)
+- [Nginx](https://www.nginx.com/resources/wiki/)
+- [Vagrant](https://www.vagrantup.com)
+
+##### Front End
+- [AngularJS](https://angularjs.org/)
+- [angular-jwt](https://github.com/auth0/angular-jwt)
+- [Bootstrap](http://getbootstrap.com/)
+
+##### Back End
+- [Python](https://www.python.org/)
+- [Flask](http://flask.pocoo.org/)
+- [SQLAlchemy](http://www.sqlalchemy.org/)
+
 ### Setting up the project
 
 ##### Prerequisites
