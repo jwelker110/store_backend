@@ -77,5 +77,4 @@ The following commands will need to be entered in the order they appear (Copy/Pa
 33. We have [bower](https://bower.io/), let's install the dependencies: `bower install`
 34. FINALLY!! We're ready to build the project from the source: `gulp`
 35. Finish it all off by ensuring Nginx is up-to-date: `sudo service nginx restart`
-
-
+36. Navigate to [http://localhost:5050](http://localhost:5050) in your browser.
