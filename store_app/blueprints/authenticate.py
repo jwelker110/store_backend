@@ -14,6 +14,10 @@ auth_bp = Blueprint("auth_bp", __name__)
 
 @auth_bp.route('/reauth', methods=['POST'])
 def jwt_reauth():
+    """
+    Reauthenticates the provided JWT Token
+    :return: JWT with the claims for the user to be sent on future requests
+    """
 
     req = loads(request.data)
     jwt_token = req.get('jwt_token')

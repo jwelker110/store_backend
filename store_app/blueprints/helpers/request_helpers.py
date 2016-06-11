@@ -11,8 +11,10 @@ def convertToInt(num):
         num = 0
     return num
 
+
 def allowed_filename(filename):
     return filename.split('.', 1)[1] in ALLOWED_EXT
+
 
 def isNullOrUndefined(s):
     return s == 'null' or s == 'undefined' or s is None
