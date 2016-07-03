@@ -10,6 +10,8 @@ I chose to create a generic store inventory that allows users to add their own l
 associated cost, stock, description, and optional item image. If an image is not provided, a generic placeholder is used 
 instead.
 
+The frontend implementation is [here](https://github.com/jwelker110/store_frontend)
+
 ### Technologies Used
 
 - [JWT](https://jwt.io)
