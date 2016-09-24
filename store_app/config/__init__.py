@@ -1,1 +1,1 @@
-from config import DevelopmentConfig, TestingConfig
+from config import ProductionConfig, DevelopmentConfig, TestingConfig

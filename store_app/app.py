@@ -1,7 +1,7 @@
 from flask import Flask
 from json import loads
 from extensions import db
-from config import DevelopmentConfig
+from config import ProductionConfig
 from blueprints import user_bp, item_bp, category_bp, auth_bp
 from blueprints.helpers import create_response
 
@@ -10,7 +10,7 @@ import os
 DEFAULT_BLUEPRINTS = (user_bp, item_bp, category_bp, auth_bp)
 
 
-def create_app(app_name='Store App', blueprints=DEFAULT_BLUEPRINTS, config=DevelopmentConfig):
+def create_app(app_name='Store App', blueprints=DEFAULT_BLUEPRINTS, config=ProductionConfig):
     # create and set up the application
     app = Flask(app_name)
 
@@ -43,10 +43,10 @@ def configure_processors(app):
 def configure_extensions(app):
     # setup SQLAlchemy
     db.init_app(app)
-    db.drop_all(app=app)
+#    db.drop_all(app=app)
     db.create_all(app=app)
-    from dummy_data import create_test_data
-    create_test_data(app)
+#    from dummy_data import create_test_data
+#    create_test_data(app)
 
 
 def configure_blueprints(app, blueprints):

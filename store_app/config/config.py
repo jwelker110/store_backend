@@ -27,7 +27,7 @@ class DevelopmentConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):  # todo change to postgres pls
-    SQLALCHEMY_DATABASE_URI = 'mysql://username:password@server/db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://catalog:catalog@localhost/catalogdb'
     DEBUG = False
     TESTING = False
 

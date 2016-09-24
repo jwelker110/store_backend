@@ -1,3 +1,5 @@
+import sys
+
 from flask import Blueprint, request
 from json import loads, dumps
 from string import lower, replace
@@ -118,7 +120,9 @@ def item_image_ep():
                 f = open(getcwd() + '/' + newFilename, 'w')
                 f.write(image_file.read())
                 f.close()
-            except:
+            except Exception as e:
+		sys.stderr.write(e.message)
+		print e.message
                 return create_response({}, status=500)
         else:
             return create_response({}, status=400)
@@ -132,7 +136,9 @@ def item_image_ep():
 
         db.session.commit()
         return create_response({})
-    except:
+    except Exception as e:
+	sys.stderr.write(e.message)
+	print e.message
         db.session.rollback()
         return create_response({}, status=500)
 

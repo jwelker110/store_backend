@@ -12,7 +12,7 @@ from store_app.extensions import db
 auth_bp = Blueprint("auth_bp", __name__)
 
 
-@auth_bp.route('/reauth', methods=['POST'])
+@auth_bp.route('/api/reauth', methods=['POST'])
 def jwt_reauth():
     """
     Reauthenticates the provided JWT Token
@@ -30,7 +30,7 @@ def jwt_reauth():
     return create_response({'jwt_token': create_jwt(payload)})
 
 
-@auth_bp.route('/goauth', methods=['POST'])
+@auth_bp.route('/api/goauth', methods=['POST'])
 def google_oauth():
     """
     If the user already has an account, they are signed in. If the user does 
