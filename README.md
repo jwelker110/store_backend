@@ -55,6 +55,7 @@ The following commands will need to be entered in the order they appear (Copy/Pa
 9. Create the virtual environment: `virtualenv --python=/usr/bin/python2.7 store-env`
 10. Activate the virtual environment so we can install our dependencies: `source store-env/bin/activate`
 11. Install our dependencies: `pip install -r requirements.txt`
+  A. Note: If the wheel fails to build for some requirements, ensure you have the required dependencies install for cryptography by executing `sudo apt-get install build-essential libssl-dev libffi-dev python-dev` on the command line.
 12. Install uWSGI using pip: `pip install uwsgi`
 13. Move into the project's config directory: `cd store_app/config`
 14. We can use the example as our secret: `mv config_example.py config_secret.py`
